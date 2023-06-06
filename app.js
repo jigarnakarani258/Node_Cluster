@@ -49,11 +49,11 @@ else {
    
     /*************Start server only when database connect sucessfully *****************/
     try {
-        app.listen(3000, (err) => {
+        app.listen(process.env.PORT, (err) => {
             if (err) {
                 console.log(err);
             }
-            console.log(`Server is listening on http://localhost:3000`)
+            console.log(`Server is listening on http://localhost:${process.env.PORT}`)
         })
     }
     catch (error) {

@@ -1,7 +1,17 @@
 Start Node_Cluster demo
 
-pkgs
+dependencies
 npm install cors dotenv express loadtest morgan nodemon 
 
+
 loadtest command
+$ loadtest [-n requests] [-c concurrency] [-k] URL
+
+The URL can be "http://", "https://" or "ws://". 
+Set the max number of requests with -n, 
+and the desired level of concurrency with the -c parameter.
+Use keep-alive connections with -k whenever it makes sense, 
+which should be always except when you are testing opening and closing connections.
+
+example
 loadtest -n 10 -c 10 http://localhost:3000
