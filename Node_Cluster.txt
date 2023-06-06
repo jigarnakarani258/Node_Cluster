@@ -1,1 +1,7 @@
 Start Node_Cluster demo
+
+pkgs
+npm install cors dotenv express loadtest morgan nodemon 
+
+loadtest command
+loadtest -n 10 -c 10 http://localhost:3000
