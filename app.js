@@ -3,13 +3,16 @@ import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
 import morgan from "morgan";
-import { homePageWithOutCluster, slowPageWithOutCluster } from "./controllers/withOutCluster.js";
+import cluster from "cluster";
+import os from "os";
+import { homePage, slowPage } from "./controllers/controller.js";
 
+const Number_Of_CPU_Cors = os.cpus().length;
 const app = express();
 
-app.use(cors());
 
 /** Middlewares **/
+app.use(cors());
 app.use(express.json());;
 app.use(morgan('tiny'))
 app.disable('x-powerd-by')   ///less hackers know about our stack
@@ -22,23 +25,43 @@ app.get('/', (req, res) => {
     })
 })
 
-/******************** With OUT Cluster request handling time **********************/
-app.get('/homepage', homePageWithOutCluster ) ;
-app.get('/slowpage', slowPageWithOutCluster ) ;
 
+if (cluster.isMaster) {
 
-/*************Start server only when database connect sucessfully *****************/
-try {
-    app.listen(3000, (err) => {
-        if (err) {
-            console.log(err);
-        }
-        console.log(`Server is listening on http://localhost:3000`)
-    })
+    console.log(`Master process ${process.pid} is running`);
+    
+    //fork workers.
+    for (let i = 0; i < Number_Of_CPU_Cors; i++) {
+
+        console.log(`Forking process worker ${i}...`);
+        cluster.fork(); //creates new node js processes
+    }
+    
+    cluster.on("exit", (worker, code, signal) => {
+
+      console.log(`worker ${worker.process.pid} died`);
+      cluster.fork(); //forks a new process if any process dies
+    });
+
 }
-catch (error) {
-    console.log("can not connnect to the server!!");
+else {
+
+   
+    /*************Start server only when database connect sucessfully *****************/
+    try {
+        app.listen(3000, (err) => {
+            if (err) {
+                console.log(err);
+            }
+            console.log(`Server is listening on http://localhost:3000`)
+        })
+    }
+    catch (error) {
+        console.log("can not connnect to the server!!");
+    }
+
 }
 
 
-export default app ;
+app.get('/homepage', homePage ) ;
+app.get('/slowpage', slowPage ) ;

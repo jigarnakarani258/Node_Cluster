@@ -1,11 +1,11 @@
-export async function homePageWithOutCluster(req , res ) {
+export async function homePage(req , res ) {
     res.send({
         status: "success",
         message: "Home page"
     })
 }
 
-export async function slowPageWithOutCluster(req , res ) {
+export async function slowPage(req , res ) {
 
     try {
         let result = 0;
