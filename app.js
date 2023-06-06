@@ -5,7 +5,7 @@ import cors from "cors";
 import morgan from "morgan";
 import cluster from "cluster";
 import os from "os";
-import { homePage, slowPage } from "./controllers/controller.js";
+import router from "./routers/routes.js";
 
 const Number_Of_CPU_Cors = os.cpus().length;
 const app = express();
@@ -25,6 +25,7 @@ app.get('/', (req, res) => {
     })
 })
 
+app.use( '/api/v1' , router );
 
 if (cluster.isMaster) {
 
@@ -63,5 +64,3 @@ else {
 }
 
 
-app.get('/homepage', homePage ) ;
-app.get('/slowpage', slowPage ) ;
